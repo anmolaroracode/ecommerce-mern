@@ -47,7 +47,7 @@ and an admin dashboard for managing products and orders.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ecommerce-mern.git
+git clone https://github.com/anmolaroracode/ecommerce-mern.git
 
 # Install frontend dependencies
 cd frontend
