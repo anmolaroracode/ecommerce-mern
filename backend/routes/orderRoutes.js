@@ -1,0 +1,45 @@
+const express = require('express');
+const Order = require('../models/Order');
+const { protect } = require('../middlewares/authMiddleware');
+
+const router = express.Router();
+
+// @route   GET api/orders/my-orders
+// @desc    Get logged-in user's orders
+// @access  Private
+router.get('/my-orders', protect, async (req, res) => {
+  try {
+    const orders = await Order.find({ user: req.user._id })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    if (orders.length === 0)
+      return res.status(404).json({ message: "No Orders Found" });
+
+    return res.status(200).json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server Error" });
+  }
+});
+
+// @route   GET api/orders/:id
+// @desc    Get details of a specific order
+// @access  Private
+router.get('/:id', protect, async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id)
+      .populate('user', 'username email')
+      .lean();
+
+    if (!order)
+      return res.status(404).json({ message: "No Order Found" });
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Server Error" });
+  }
+});
+
+module.exports = router;
